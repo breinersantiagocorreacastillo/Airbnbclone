@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from "react";
@@ -10,7 +9,7 @@ import Input from "../input/Input";
 import Titulo from "../Titulo";
 import Button from "../Button";
 import { FcGoogle } from "react-icons/fc";
-import { supabaseBrowser } from "@/libs/supabase/browser-client"; 
+import { supabaseBrowser } from "@/libs/supabase/browser-client";
 
 export default function RegisterModal() {
   const registerModal = useRegisterModal();
@@ -29,8 +28,6 @@ export default function RegisterModal() {
   };
 
   const onSubmit = async (e) => {
-    //e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       toast.error("Las contraseñas no coinciden");
       return;
@@ -43,23 +40,68 @@ export default function RegisterModal() {
     setIsLoading(true);
 
     try {
+      console.log('🔍 Intentando registro con:', formData.email);
+
+      // ✅ SIMPLIFICAR - Remover emailRedirectTo temporalmente
       const { data, error } = await supabaseBrowser.auth.signUp({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
         options: {
           data: {
-            full_name: formData.name, 
-          },
+            full_name: formData.name,
+          }
+          // ❌ REMOVER temporalmente: emailRedirectTo
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('🔍 Error registro:', error);
+        
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          toast.error("Este email ya está registrado");
+        } else if (error.message.includes('session') || error.name === 'AuthSessionMissingError') {
+          toast.error("Error de sesión. Por favor recarga la página.");
+        } else {
+          toast.error(error.message || "Error al crear la cuenta");
+        }
+        return;
+      }
 
-      toast.success("¡Cuenta creada! Revisa tu correo para confirmar");
+      console.log('🔍 Respuesta registro:', data);
+
+      // Manejar respuesta
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        toast.error("Este email ya está registrado");
+        return;
+      }
+
+      // Éxito
+      toast.success("¡Cuenta creada! Revisa tu correo para confirmar.");
       registerModal.onClose();
-      loginModal.onOpen();
+      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+
     } catch (err) {
-      toast.error(err.message || "Error al crear la cuenta");
+      console.error('🔍 Error inesperado:', err);
+      toast.error("Error al crear la cuenta. Intenta nuevamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ✅ Google OAuth simplificado
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabaseBrowser.auth.signInWithOAuth({
+        provider: 'google'
+        // ❌ Remover redirectTo temporalmente
+      });
+
+      if (error) throw error;
+      
+    } catch (error) {
+      console.error('Error Google OAuth:', error);
+      toast.error("Error al iniciar con Google");
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +124,7 @@ export default function RegisterModal() {
         outline
         label="Continuar con Google"
         icon={FcGoogle}
-        onClick={() => supabaseBrowser.auth.signInWithOAuth({ provider: 'google' })}
+        onClick={handleGoogleSignIn}
         disabled={isLoading}
       />
       <div className="text-neutral-500 text-center mt-4 font-light">

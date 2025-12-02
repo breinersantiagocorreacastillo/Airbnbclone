@@ -1,3 +1,5 @@
+'use client';
+
 // Importar los datos de países
 import countries from "world-countries";
 

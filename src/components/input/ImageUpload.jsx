@@ -6,7 +6,7 @@ import { TbPhotoPlus } from "react-icons/tb";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 
-// CLIENTE DEL NAVEGADOR (correcto)
+
 import { supabaseBrowser } from "@/libs/supabase/browser-client";
 
 export default function ImageUpload({ onChange, value }) {

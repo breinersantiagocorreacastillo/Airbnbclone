@@ -1,15 +1,17 @@
 import Container from "@/components/container";
-import { cookies } from 'next/headers';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import ListingCard from "@/components/listings/listingCard";
+import { createClient } from "@/libs/supabase/serber";
 import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function Home() {
-  // CLIENTE CORRECTO PARA SERVER COMPONENTS
-  const supabase = createServerComponentClient({ cookies });
+  
+ const supabase = await createClient();
+
+
+ 
 
   const { data: listings } = await supabase
     .from('listings')

@@ -1,3 +1,5 @@
+'use client';
+
 import create from 'zustand';
 
 // Definición de la tienda (store) para el modal

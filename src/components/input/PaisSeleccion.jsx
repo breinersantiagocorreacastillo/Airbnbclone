@@ -1,9 +1,8 @@
 'use client';
 import usePais from "@/app/hook/usePais";
 
- // Asegúrate de que este componente se ejecute en el cliente
+ 
 
-// Componente PaisSeleccion
 export default function PaisSeleccion({ value, onChange }) {
   const { getAll } = usePais(); // Llamada al hook para obtener todos los países
 

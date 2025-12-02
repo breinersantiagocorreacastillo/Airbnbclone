@@ -1,32 +1,46 @@
+// components/CategoriaBox.jsx - VERSIÓN CORREGIDA
 'use client';
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
 
-export default function CategoriaBox({ icon: Icon, label, selected, description }) {
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+
+export default function CategoriaBox({ 
+  icon: Icon, 
+  label, 
+  selected: initialSelected,
+  description 
+}) {
   const router = useRouter();
-  const params = useSearchParams();
+  const [selected, setSelected] = useState(initialSelected);
+  
+  // Sincronizar con URL changes
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const categoria = searchParams.get('categoria');
+      setSelected(categoria === label);
+    };
+    
+    handleUrlChange(); // Initial check
+    window.addEventListener('popstate', handleUrlChange);
+    
+    return () => window.removeEventListener('popstate', handleUrlChange);
+  }, [label]);
 
   const handleClick = useCallback(() => {
-    // Obtenemos los parámetros actuales de la URL
-    const currentQuery = Object.fromEntries(params.entries());
-
-    // Agregamos o eliminamos el parámetro "categoria" según corresponda
-    const updatedQuery = {
-      ...currentQuery,
-      categoria: label,
-    };
-
-    // Si el valor de "categoria" ya es el que se ha seleccionado, lo eliminamos
-    if (params.get('categoria') === label) {
-      delete updatedQuery.categoria;
-    }
-
-    // Construimos la nueva URL con los parámetros actualizados
-    const searchParams = new URLSearchParams(updatedQuery);
+    const searchParams = new URLSearchParams(window.location.search);
+    const currentCategoria = searchParams.get('categoria');
     
-    // Redirigimos al usuario a la nueva URL con los parámetros actualizados
+    if (currentCategoria === label) {
+      // Remove categoria parameter
+      searchParams.delete('categoria');
+    } else {
+      // Set categoria parameter
+      searchParams.set('categoria', label);
+    }
+    
     router.push(`/?${searchParams.toString()}`);
-  }, [label, params, router]);
+  }, [label, router]);
 
   return (
     <div 

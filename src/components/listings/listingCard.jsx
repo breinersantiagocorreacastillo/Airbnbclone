@@ -1,14 +1,28 @@
 
 'use client'; 
 
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import HeartButton from "./HeartButton";
 
 export default function ListingCard({ data }) {
  
+const router = useRouter();
+
+  const handleClick = () => {
+    console.log(' DEBUG ListingCard:');
+    console.log('data.id:', data.id);
+    console.log('Tipo de data.id:', typeof data.id);
+    console.log('Ruta completa:', `/listings/${data.id}`);
+    
+    router.push(`/listings/${data.id}`);
+  };
 
   return (
-    <div className="group cursor-pointer transition hover:scale-105">
+    <div className="group cursor-pointer transition hover:scale-105"
+    onClick={handleClick}
+    
+    >
       <div className="aspect-square w-full relative overflow-hidden rounded-xl">
         <Image
           fill

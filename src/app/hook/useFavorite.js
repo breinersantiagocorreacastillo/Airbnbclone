@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -10,17 +9,45 @@ export default function useFavorite({ listingId }) {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
   const [hasFavorited, setHasFavorited] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // 1. USUARIO DESDE SUPABASE
+  
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabaseBrowser.auth.getUser();
+    try {
+      const { data, error } = await supabaseBrowser.auth.getUser();
+      
+      if (error) {
+        console.log('🔍 Error getting user (manejado):', error.name, error.message);
+        
+        setCurrentUser(null);
+        return;
+      }
+      
       setCurrentUser(data.user);
-    };
-    getUser();
+    } catch (error) {
+      console.log('🔍 Error inesperado en getUser:', error);
+      setCurrentUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  getUser();
+
+  
+  const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange(
+    async (event, session) => {
+      console.log('🔍 Auth state changed:', event);
+      setCurrentUser(session?.user || null);
+      setLoading(false);
+    }
+  );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  // 2. CARGAMOS SI YA ESTÁ EN FAVORITOS 
+   
   useEffect(() => {
     if (!currentUser || !listingId) {
       setHasFavorited(false);
@@ -33,16 +60,19 @@ export default function useFavorite({ listingId }) {
     setHasFavorited(list.includes(listingId));
   }, [currentUser, listingId]);
 
-  // 3. TOGGLE FAVORITO
+  
   const toggleFavorite = useCallback(async (e) => {
     e?.stopPropagation();
 
-    if (!currentUser) {
+    
+    const { data: { user } } = await supabaseBrowser.auth.getUser();
+    
+    if (!user) {
       toast.error('Inicia sesión para guardar favoritos');
       return;
     }
 
-    const key = `favorites_${currentUser.id}`;
+    const key = `favorites_${user.id}`;
     const saved = localStorage.getItem(key);
     let list = saved ? JSON.parse(saved) : [];
 
@@ -57,10 +87,12 @@ export default function useFavorite({ listingId }) {
     localStorage.setItem(key, JSON.stringify(list));
     setHasFavorited(!hasFavorited);
     router.refresh();
-  }, [currentUser, listingId, hasFavorited, router]);
+  }, [listingId, hasFavorited, router]);
 
   return {
     hasFavorited,
     toggleFavorite,
+    loading,
+    currentUser 
   };
 }

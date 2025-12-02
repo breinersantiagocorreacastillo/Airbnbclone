@@ -4,7 +4,7 @@ import { TbBeach, TbMountain, TbPool } from "react-icons/tb";
 
 import { MdOutlineVilla } from "react-icons/md";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname} from "next/navigation";
 import { GiBoatFishing, GiCactus, GiCaveEntrance, GiForestCamp } from "react-icons/gi";
 import { FaSkiing } from "react-icons/fa";
 import CategoriaBox from "../categoriaBox";
@@ -58,15 +58,17 @@ export const categorias = [
     },
 ];
 
-export default function Categorias() {
-    const params = useSearchParams();
-    const categoriaActual = params?.get('categoria');
+export default function Categorias({ searchParams = {} }) {
     const pathname = usePathname();
     const isMainPage = pathname === '/';
 
     if (!isMainPage) {
         return null;
     }
+
+    // Convertir searchParams object a URLSearchParams
+    const params = new URLSearchParams(searchParams);
+    const categoriaActual = params.get('categoria');
 
     return (
         <Container>

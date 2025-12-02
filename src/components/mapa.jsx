@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
@@ -20,7 +20,7 @@ export default function Mapa({ center }) {
         shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
 
-      setMapComponents({ MapContainer, TileLayer, Marker, L }); // Guardar los componentes cargados en el estado
+      setMapComponents({ MapContainer, TileLayer, Marker, L }); 
     };
 
     loadMap();
@@ -38,7 +38,7 @@ export default function Mapa({ center }) {
 
   return (
     <MapContainer
-      center={center || [51.505, -0.09]} // Valor predeterminado si no hay centro
+      center={center || [51.505, -0.09]} 
       zoom={center ? 4 : 2}
       scrollWheelZoom={false}
       className="h-[35vh] rounded-lg"
@@ -47,7 +47,7 @@ export default function Mapa({ center }) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {center && <Marker position={center} />} {/* Si hay centro, mostramos el marcador */}
+      {center && <Marker position={center} />} 
     </MapContainer>
   );
 }

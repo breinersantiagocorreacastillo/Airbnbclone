@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 
 const useLoginModal = create((set) => ({
