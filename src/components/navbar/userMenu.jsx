@@ -119,13 +119,13 @@ export default function UserMenu() {
                   <p className="text-xs text-neutral-500 truncate">{user.email}</p>
                 </div>
 
-                <MenuItem label="Mis viajes" onClick={() => { setEstaAbierto(false); router.push('/mis-viajes'); }} />
+                <MenuItem label="Mis viajes" onClick={() => {}} />
                 <hr />
-                <MenuItem label="Mis favoritos" onClick={() => { setEstaAbierto(false); router.push('/mis-favoritos'); }} />
+                <MenuItem label="Mis favoritos" onClick={() => {}} />
                 <hr />
-                <MenuItem label="Mis reservas" onClick={() => { setEstaAbierto(false); router.push('/mis-reservas'); }} />
+                <MenuItem label="Mis reservas" onClick={() => {}} />
                 <hr />
-                <MenuItem label="Mis propiedades" onClick={() => { setEstaAbierto(false); router.push('/mis-propiedades'); }} />
+                <MenuItem label="Mis propiedades" onClick={() => {}} />
                 <MenuItem label="Airbnb mi hogar" onClick={onRent} />
                 <hr />
                 <MenuItem

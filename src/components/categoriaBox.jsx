@@ -1,4 +1,4 @@
-// components/CategoriaBox.jsx - VERSIÓN CORREGIDA
+
 'use client';
 
 import { useRouter } from "next/navigation";

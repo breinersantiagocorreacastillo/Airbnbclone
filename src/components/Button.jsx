@@ -1,6 +1,5 @@
 
 'use client';
-import { IconType } from "react-icons";
 
 export default function Button({ label, onClick, disabled, outline, small, icon: Icon }) {
   return (
@@ -16,12 +15,6 @@ export default function Button({ label, onClick, disabled, outline, small, icon:
       ${small ? 'font-light' : 'font-semibold'}
       ${small ? 'border-[1px]' : 'border-2'}`}
     >
-      {Icon && (
-        <Icon
-          size={24}
-          className="absolute left-3 top-2"
-        />
-      )}
       {label}
     </button>
   );
